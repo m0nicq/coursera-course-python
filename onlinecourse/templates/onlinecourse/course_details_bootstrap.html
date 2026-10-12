@@ -1,0 +1,15 @@
+{% extends 'onlinecourse/base.html' %}
+{% block title %}{{ course.name }}{% endblock %}
+{% block content %}
+<p class="text-primary fw-bold">МАТЕРИАЛЫ КУРСА</p><h1>{{ course.name }}</h1><p class="lead mb-4">{{ course.description }}</p>
+{% for lesson in lessons %}
+<article class="card p-4 mb-3"><span class="text-secondary">Урок {{ forloop.counter }}</span><h2 class="h4 mt-2">{{ lesson.title }}</h2><div>{{ lesson.content|linebreaks }}</div></article>
+{% empty %}<p>Уроки пока не добавлены.</p>{% endfor %}
+<section class="mt-5"><h2>Пробный экзамен</h2><p>Выберите все правильные ответы. Проходной балл — 70%.</p>
+{% if user.is_authenticated %}<form method="post" action="{% url 'onlinecourse:submit' course.id %}">{% csrf_token %}
+{% for lesson in lessons %}{% for question in lesson.question_set.all %}
+<fieldset class="card p-4 mb-3"><legend class="h5">{{ question.question_text }} <span class="badge bg-secondary">{{ question.grade }} балл.</span></legend>
+{% for choice in question.choice_set.all %}<label class="d-flex gap-2 align-items-center py-2"><input type="checkbox" name="choices" value="{{ choice.id }}">{{ choice.choice_text }}</label>{% endfor %}</fieldset>
+{% endfor %}{% endfor %}<button class="btn btn-primary btn-lg">Отправить ответы</button></form>
+{% else %}<a class="btn btn-primary" href="{% url 'onlinecourse:login' %}?next={{ request.path|urlencode }}">Войти для сдачи экзамена</a>{% endif %}</section>
+{% endblock %}

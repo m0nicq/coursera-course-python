@@ -1,0 +1,10 @@
+{% extends 'onlinecourse/base.html' %}{% block title %}Результаты экзамена{% endblock %}{% block content %}
+<p class="text-primary fw-bold">{{ course.name }} · ПРОБНЫЙ ЭКЗАМЕН</p>
+<div class="alert {% if passed %}alert-success{% else %}alert-warning{% endif %} p-4">
+<h1 class="h2">{% if passed %}Поздравляем! Вы успешно сдали экзамен!{% else %}Попробуйте ещё раз{% endif %}</h1>
+<p class="fs-4 mb-1">Оценка: <strong>{{ percent }}%</strong> · {{ submission.score }} из {{ submission.total }} баллов</p>
+<p class="mb-0">Проходной балл: 70% · {% if passed %}Успешная попытка{% else %}Экзамен не сдан{% endif %}</p></div>
+<h2 class="h3 my-4">Результаты экзамена</h2>
+{% for result in results %}<article class="card p-4 mb-3"><div class="d-flex justify-content-between gap-3"><h3 class="h5">{{ forloop.counter }}. {{ result.question.question_text }}</h3><span class="badge {% if result.correct %}bg-success{% else %}bg-danger{% endif %} align-self-start">{% if result.correct %}Верно{% else %}Неверно{% endif %}</span></div>
+{% for choice in result.choices %}<div class="py-1 {% if choice.correct %}text-success{% endif %}">{% if choice.selected %}☑{% else %}☐{% endif %} {{ choice.text }}{% if choice.correct %} — правильный ответ{% endif %}</div>{% endfor %}</article>{% endfor %}
+<a class="btn btn-outline-primary mt-3" href="{% url 'onlinecourse:course_details' course.id %}">Вернуться к курсу</a>{% endblock %}
